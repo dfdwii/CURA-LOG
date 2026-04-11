@@ -1,0 +1,2 @@
+# CURA-LOG-Sistem-Pencatatan-dan-Monitoring-Alat-Medis-Terpadu
+CURA-LOG adalah platform Sistem Informasi Inventaris Alat Medis yang fokus pada akurasi data dan efisiensi operasional. Website ini mengintegrasikan pencatatan stok, monitoring lokasi, hingga pengingat kalibrasi secara terpadu. Dengan antarmuka modern, CURA-LOG menjamin setiap alat kesehatan siap pakai demi standar keselamatan pasien yang optimal.
