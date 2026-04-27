@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-blue: #004b87;
+    --secondary-blue: #007bb5;
+    --light-bg: #f4f7f6;
+    --sidebar-bg: #ffffff;
+    --text-dark: #2c3e50;
+    --text-muted: #7f8c8d;
+    --danger-red: #e74c3c;
+    --warning-yellow: #f1c40f;
+    --success-green: #2ecc71;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+}
+
+.sidebar {
+    background-color: var(--sidebar-bg);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    min-height: 100vh;
+}
+
+.sidebar .nav-link {
+    color: var(--text-dark);
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover, 
+.sidebar .nav-link.active {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-blue) !important;
+}
+
+.table-responsive {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+}
+
+.table thead th {
+    font-weight: 600;
+    border-bottom: none;
+    padding: 15px;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f5f8;
+}
