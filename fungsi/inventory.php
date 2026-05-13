@@ -1,5 +1,6 @@
 <?php
 require_once '../config.php';
+require_once '../auth_check.php';
 global $koneksi;
 if(!isset($_SESSION['username'])) {
     header("Location: ../login.php");

@@ -1,42 +1,47 @@
 :root {
-    --biru-rs: #0057B8;
-    --putih: #ffffff;
-    --abu-bg: #f8fafc;
+--biru-rs: #0057B8;
+--putih: #ffffff;
+--abu-bg: #f8fafc;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--abu-bg);
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: var(--abu-bg);
 }
 
 .sidebar {
-    min-height: 100vh;
-    background-color: var(--putih);
-    border-right: 1px solid #dee2e6;
+min-height: 100vh;
+background-color: var(--putih);
+border-right: 1px solid #dee2e6;
 }
 
 .sb-brand {
-    padding: 18px 20px;
-    border-bottom: 1px solid #dee2e6;
-    text-align: center;
+padding: 18px 20px;
+border-bottom: 1px solid #dee2e6;
+text-align: center;
 }
 
 .sb-brand h4 {
-    color: var(--biru-rs);
-    font-weight: bold;
-    margin: 0;
+color: var(--biru-rs);
+font-weight: bold;
+margin: 0;
 }
 
 .table thead th {
-    background-color: #f1f5f9;
-    color: #64748b;
-    font-size: 12px;
-    text-transform: uppercase;
+background-color: #f1f5f9;
+color: #64748b;
+font-size: 12px;
+text-transform: uppercase;
 }
 
 .img-alat {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 5px;
+width: 50px;
+height: 50px;
+object-fit: cover;
+border-radius: 5px;
+}
+
+.card-regis {
+margin-top: 50px;
+margin-bottom: 50px;
 }
