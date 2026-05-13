@@ -1,133 +1,94 @@
-# CURA-LOG 🏥
-**Sistem Manajemen Inventaris Alat Medis**  
-Untuk tenaga medis: Admin, Dokter, Organizer
+# 🏥 CURA-LOG - Sistem Informasi Manajemen Inventaris Alat Medis
+
+CURA-LOG adalah aplikasi berbasis web yang dirancang untuk memudahkan rumah sakit atau klinik dalam mengelola, melacak, dan memonitor inventaris alat medis. Aplikasi ini dikembangkan menggunakan **PHP (Prosedural/MySQLi)** dan antarmuka **Bootstrap 5**, sangat cocok sebagai referensi tugas mata kuliah Pemrograman Web / Basis Data.
+
+## ✨ Fitur Utama
+
+Aplikasi ini menggunakan sistem *Role-Based Access Control* (RBAC) dengan 3 jenis hak akses: **Admin**, **Organizer**, dan **Dokter**.
+
+### 👨‍⚕️ Fitur Dokter:
+* **Registrasi Mandiri:** Dokter dapat membuat akun sendiri melalui halaman pendaftaran.
+* **Melihat Inventaris:** Melihat daftar alat medis yang tersedia beserta detail kelengkapannya.
+* **Peminjaman Alat:** Meminjam alat medis yang berstatus "Tersedia" dengan mencatat keperluan dan ruangan tujuan.
+* **Histori Pribadi:** Melihat riwayat peminjaman alat yang hanya dilakukan oleh dokter yang bersangkutan.
+* **Pengembalian Alat:** Mengembalikan alat medis yang telah selesai digunakan.
+
+### 👨‍💻 Fitur Admin & Organizer (Staff Inventaris):
+* **Dashboard Interaktif:** Menampilkan statistik total alat, alat tersedia, sedang dipinjam, serta notifikasi peringatan jika ada alat yang *Rusak* atau sedang *Maintenance*.
+* **Manajemen Inventaris (CRUD):** Menambah, mengedit, dan menghapus data alat medis beserta gambar (mendukung *upload* gambar atau *preset*).
+* **Update Status & Kondisi:** Mengubah status alat secara cepat (Tersedia, Dipinjam, Rusak, Maintenance, Perlu Kalibrasi).
+* **Monitoring Histori Keseluruhan:** Memantau seluruh aktivitas peminjaman dan pengembalian alat dari semua pengguna.
 
 ---
 
-## 📋 Fitur Utama
-- **Login aman** — CSRF token, anti-SQL Injection (PDO Prepared Statements), validasi kosong/spasi, session timeout
-- **Dashboard** — Statistik real-time, notifikasi alat rusak & kalibrasi, peminjaman aktif
-- **Inventaris CRUD** — Tambah, edit, hapus, update status, view grid/tabel, search & filter
-- **Peminjaman & Histori** — Pinjam alat, kembalikan, riwayat lengkap per user
-- **Role-Based Access** — Admin (penuh), Organizer (kelola inventaris), Dokter (lihat & pinjam)
-- **Export CSV** — Export inventaris & histori ke CSV (Excel-compatible)
-- **Error Handling** — Toast notification, halaman error ramah pengguna
+## 🛠️ Teknologi yang Digunakan
+
+* **Backend:** PHP 8+ (Gaya Penulisan Prosedural / MySQLi)
+* **Database:** MySQL / MariaDB
+* **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
+* **Framework CSS:** Bootstrap 5.3
+* **Icon:** Bootstrap Icons
 
 ---
 
-## 🗂️ Struktur Direktori
-```
-CURALOG/
+## 🚀 Cara Instalasi (Localhost)
+
+1. **Persiapan:** Pastikan kamu sudah menginstal web server lokal seperti **XAMPP**, **Laragon**, atau **MAMP**.
+2. **Download Proyek:** Unduh atau *clone* repositori ini, lalu letakkan folder proyek di dalam direktori root server lokal kamu (contoh: `C:\xampp\htdocs\CURALOG`).
+3. **Konfigurasi Database:**
+   * Buka phpMyAdmin (biasanya di `http://localhost/phpmyadmin`).
+   * Buat database baru dengan nama **`inventaris`**.
+   * Import file **`inventaris.sql`** yang ada di dalam folder proyek ke database tersebut.
+4. **Penyesuaian Koneksi:**
+   * Buka file `config.php` (atau `koneksi.php`).
+   * Pastikan detail koneksi sudah sesuai dengan server lokal kamu:
+     ```php
+     $host = "localhost";
+     $user = "root";
+     $pass = "";
+     $db   = "inventaris";
+     $base_url = "http://localhost/CURALOG/"; // Sesuaikan dengan nama folder kamu
+     ```
+5. **Jalankan Aplikasi:** Buka browser dan akses `http://localhost/CURALOG/`.
+
+---
+
+## 🔑 Akun Demo (Default Login)
+
+Karena *password* dienkripsi menggunakan MD5, kamu dapat menggunakan akun bawaan berikut untuk menguji sistem:
+
+| Role | Username (ID) | Password |
+| :--- | :--- | :--- |
+| **Admin** | `admin` | `admin123` |
+| **Organizer** | `organizer` | `org123` |
+| **Dokter** | `200101` | `dokter123` |
+
+---
+
+## 📂 Struktur Folder Utama
+
+```text
+/CURALOG
 ├── assets/
 │   └── img/
-│       └── alat_medis/      ← Gambar alat medis (.webp)
+│       └── alat_medis/    # Folder penyimpanan gambar alat & preset
 ├── css/
-│   └── style.css            ← Stylesheet utama (tema medis)
-├── fungsi/
-│   ├── inventory.php        ← Daftar & CRUD inventaris
-│   ├── tambah_alat.php      ← Form tambah alat
-│   ├── edit_alat.php        ← Form edit alat
-│   ├── hapus_alat.php       ← Proses hapus alat
-│   ├── update_status.php    ← Quick update status
-│   ├── proses_pinjam.php    ← Proses peminjaman
-│   ├── history.php          ← Histori peminjaman & pengembalian
-│   ├── users.php            ← Manajemen user (admin)
-│   ├── ruangan.php          ← Manajemen ruangan (admin)
-│   └── export.php           ← Export CSV
-├── tampilan/
+│   └── style.css          # File CSS kustom tambahan
+├── fungsi/                # Folder berisi logika CRUD dan proses utama
+│   ├── edit_alat.php
+│   ├── hapus_alat.php
+│   ├── history.php
+│   ├── inventory.php
+│   ├── proses_pinjam.php
+│   ├── tambah_alat.php
+│   └── update_status.php
+├── tampilan/              # Folder untuk memisahkan komponen UI (Header, Footer, Sidebar)
+│   ├── footer.php
 │   ├── header.php
-│   ├── sidebar.php
-│   └── footer.php
-├── includes/                ← (reserved)
-├── uploads/                 ← Upload gambar user
-├── api.php                  ← REST API endpoint (AJAX)
-├── config.php               ← Konfigurasi DB & helpers
-├── auth_check.php           ← Guard session & role
-├── error.php                ← Halaman error
-├── index.php                ← Dashboard
-├── login.php                ← Halaman login
-├── logout.php               ← Proses logout
-└── inventaris.sql           ← Database schema + data awal
-```
-
----
-
-## ⚙️ Instalasi
-
-### 1. Persyaratan
-- PHP 8.0+
-- MySQL 5.7+ / MariaDB 10.4+
-- Web server: Apache (XAMPP/WAMP) atau Nginx
-- Browser modern
-
-### 2. Setup Database
-```sql
--- Buka phpMyAdmin atau MySQL CLI, lalu jalankan:
-source /path/to/CURALOG/inventaris.sql
-```
-
-### 3. Konfigurasi
-Edit `config.php`:
-```php
-define('DB_HOST', 'localhost');   // host database
-define('DB_NAME', 'inventaris');  // nama database
-define('DB_USER', 'root');        // username MySQL
-define('DB_PASS', '');            // password MySQL
-define('BASE_URL', 'http://localhost/CURALOG/');  // URL aplikasi
-```
-
-### 4. Jalankan
-Letakkan folder `CURALOG/` di dalam `htdocs/` (XAMPP) atau `www/` (WAMP), lalu buka:
-```
-http://localhost/CURALOG/
-```
-
----
-
-## 🔑 Akun Default
-
-| Username   | Password    | Role      | Akses |
-|------------|-------------|-----------|-------|
-| `admin`    | `admin123`  | Admin     | Penuh: CRUD, user mgmt, export |
-| `200101`   | `dokter123` | Dokter    | Lihat inventaris, pinjam/kembalikan alat |
-| `organizer`| `org123`    | Organizer | Tambah/edit alat, update status |
-
-> ⚠️ **Ganti password default** sebelum deploy ke production!
-
----
-
-## 🔒 Keamanan
-- **PDO Prepared Statements** — Semua query menggunakan parameter binding
-- **CSRF Token** — Setiap form memiliki token unik per sesi
-- **Session Guard** — Auto-logout setelah 2 jam tidak aktif
-- **Input Sanitization** — `trim()` + `htmlspecialchars()` pada semua input
-- **Role-Based Access** — Setiap halaman dicek role sebelum diakses
-- **Password** — MD5 (demo). Untuk production, gunakan `password_hash()` + `password_verify()`
-
----
-
-## 📊 Tabel Database
-
-| Tabel | Deskripsi |
-|-------|-----------|
-| `alat` | Data alat medis |
-| `ruangan` | Daftar ruangan RS |
-| `users` | Akun pengguna sistem |
-| `history_peminjaman` | Log peminjaman & pengembalian |
-| `vendor` | Data vendor/pemasok |
-| `standar_kalibrasi` | Standar parameter kalibrasi |
-
----
-
-## 🎨 Color Palette
-| Variabel | Hex | Kegunaan |
-|----------|-----|----------|
-| Primary Blue | `#0057B8` | Navigasi, tombol utama |
-| Secondary Teal | `#00A19C` | Aksen sekunder |
-| Background | `#F8FAFC` | Latar halaman |
-| Surface | `#FFFFFF` | Kartu & konten |
-| Text | `#1E293B` | Teks utama |
-
----
-
-*CURA-LOG v1.0 — Prodi Teknik Informatika*
+│   └── sidebar.php
+├── auth_check.php         # Penjaga sesi (Middleware pengecekan login)
+├── config.php             # Konfigurasi koneksi database
+├── index.php              # Halaman Dashboard Utama
+├── login.php              # Halaman Login
+├── registrasi.php         # Halaman Registrasi Dokter
+└── inventaris.sql         # File export database MySQL
