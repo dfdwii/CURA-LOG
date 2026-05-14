@@ -54,11 +54,11 @@ include '../tampilan/header.php';
                 </div>
                 <div class="mb-3">
                     <label>Status</label>
-                    <select name="status" class="form-select">
-                        <option value="Tersedia" <?php if($data['status'] == 'Tersedia') echo 'selected'; ?>>Tersedia</option>
-                        <option value="Dipinjam" <?php if($data['status'] == 'Dipinjam') echo 'selected'; ?>>Dipinjam</option>
-                        <option value="Rusak" <?php if($data['status'] == 'Rusak') echo 'selected'; ?>>Rusak</option>
-                    </select>
+                    <select name="status" class="form-select" required>
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Rusak">Rusak</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Perlu Kalibrasi">Perlu Kalibrasi</option> </select>
                 </div>
                 <div class="mb-3">
                     <label>Keterangan</label>

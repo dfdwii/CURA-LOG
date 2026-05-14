@@ -9,6 +9,15 @@ $s_key = isset($_GET['s_key']) ? mysqli_real_escape_string($koneksi, $_GET['s_ke
 $tgl_mulai = isset($_GET['tgl_mulai']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_mulai']) : '';
 $tgl_akhir = isset($_GET['tgl_akhir']) ? mysqli_real_escape_string($koneksi, $_GET['tgl_akhir']) : '';
 
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+$url_query = '';
+if ($s_key != '') $url_query .= "&s_key=" . urlencode($s_key);
+if ($tgl_mulai != '') $url_query .= "&tgl_mulai=" . urlencode($tgl_mulai);
+if ($tgl_akhir != '') $url_query .= "&tgl_akhir=" . urlencode($tgl_akhir);
+
 if (isset($_GET['kembali'])) {
     $id_h = $_GET['kembali'];
     $id_a = $_GET['alat'];
@@ -38,13 +47,13 @@ include '../tampilan/header.php';
                 
                 <form method="GET" class="row g-2 mt-3 bg-white p-3 rounded shadow-sm border">
                     <div class="col-md-4">
-                        <input type="text" name="s_key" class="form-control" placeholder="Cari nama alat atau dokter..." value="<?php echo $s_key; ?>">
+                        <input type="text" name="s_key" class="form-control" placeholder="Cari nama alat atau dokter..." value="<?php echo htmlspecialchars($s_key); ?>">
                     </div>
                     <div class="col-md-3">
-                        <input type="date" name="tgl_mulai" class="form-control" value="<?php echo $tgl_mulai; ?>">
+                        <input type="date" name="tgl_mulai" class="form-control" value="<?php echo htmlspecialchars($tgl_mulai); ?>">
                     </div>
                     <div class="col-md-3">
-                        <input type="date" name="tgl_akhir" class="form-control" value="<?php echo $tgl_akhir; ?>">
+                        <input type="date" name="tgl_akhir" class="form-control" value="<?php echo htmlspecialchars($tgl_akhir); ?>">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">Filter Data</button>
@@ -52,7 +61,7 @@ include '../tampilan/header.php';
                 </form>
             </div>
 
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
@@ -72,14 +81,23 @@ include '../tampilan/header.php';
                             if ($s_key != '') $cond .= " AND (a.nama_alat LIKE '%$s_key%' OR u.nama_lengkap LIKE '%$s_key%')";
                             if ($tgl_mulai != '' && $tgl_akhir != '') $cond .= " AND h.tgl_pinjam BETWEEN '$tgl_mulai 00:00:00' AND '$tgl_akhir 23:59:59'";
 
+                            $q_count = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM history_peminjaman h JOIN alat a ON h.id_alat=a.id_alat JOIN users u ON h.id_user=u.id $cond");
+                            $row_count = mysqli_fetch_assoc($q_count);
+                            $total_data = $row_count['total'];
+                            $total_pages = ceil($total_data / $limit);
+
                             $sql = "SELECT h.*, a.nama_alat, u.nama_lengkap FROM history_peminjaman h 
                                     JOIN alat a ON h.id_alat=a.id_alat 
                                     JOIN users u ON h.id_user=u.id 
-                                    $cond ORDER BY h.id_history DESC";
+                                    $cond ORDER BY h.id_history DESC LIMIT $limit OFFSET $offset";
                             
                             $q = mysqli_query($koneksi, $sql);
-                            while($h = mysqli_fetch_array($q)) {
-                                $badge = ($h['status_peminjaman'] == 'Dipinjam') ? 'bg-warning text-dark' : 'bg-success';
+
+                            if (mysqli_num_rows($q) == 0) {
+                                echo '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>Belum ada riwayat peminjaman saat ini.</td></tr>';
+                            } else {
+                                while($h = mysqli_fetch_array($q)) {
+                                    $badge = ($h['status_peminjaman'] == 'Dipinjam') ? 'bg-warning text-dark' : 'bg-success';
                             ?>
                             <tr>
                                 <td class="ps-3"><strong><?php echo $h['nama_alat']; ?></strong></td>
@@ -95,11 +113,30 @@ include '../tampilan/header.php';
                                     <?php } else { echo '<i class="bi bi-check-circle-fill text-success"></i>'; } ?>
                                 </td>
                             </tr>
-                            <?php } ?>
+                            <?php } } ?>
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <?php if ($total_pages > 1) { ?>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?><?php echo $url_query; ?>">Sebelumnya</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                        <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?><?php echo $url_query; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php } ?>
+                    <li class="page-item <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?><?php echo $url_query; ?>">Selanjutnya</a>
+                    </li>
+                </ul>
+            </nav>
+            <?php } ?>
+
         </div>
     </div>
 </div>

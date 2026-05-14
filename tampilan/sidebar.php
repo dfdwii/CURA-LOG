@@ -1,31 +1,43 @@
-<div class="col-md-2 sidebar p-0 d-flex flex-column" style="min-height: 100vh;">
-    <div>
-        <div class="sb-brand">
-            <h4>CURA-LOG</h4>
-        </div>
-        <div class="list-group list-group-flush mt-2">
-            <a href="<?php echo $base_url; ?>index.php" class="list-group-item list-group-item-action <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">Dashboard</a>
-            <a href="<?php echo $base_url; ?>fungsi/inventory.php" class="list-group-item list-group-item-action <?php echo basename($_SERVER['PHP_SELF']) == 'inventory.php' ? 'active' : ''; ?>">Inventaris</a>
-            <a href="<?php echo $base_url; ?>fungsi/history.php" class="list-group-item list-group-item-action"><?php echo ($_SESSION['role'] == 'dokter') ? 'Histori Pinjam' : 'Laporan Peminjaman'; ?>
+<?php
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+<div class="col-md-2 d-none d-md-block bg-white shadow-sm p-0" style="position: fixed; top: 0; left: 0; bottom: 0; width: 16.666667%; z-index: 1030;">
+    
+    <div class="p-4 border-bottom text-center">
+        <h4 class="text-primary fw-bold m-0">CURA-LOG</h4>
+    </div>
+    
+    <div class="list-group list-group-flush mt-2" style="height: calc(100vh - 160px); overflow-y: auto;">
+        <a href="<?php echo $base_url; ?>index.php" class="list-group-item list-group-item-action border-0 <?php echo ($current_page == 'index.php') ? 'active bg-primary text-white' : ''; ?>">
+            Dashboard
         </a>
-
-        </div>
+        <a href="<?php echo $base_url; ?>fungsi/inventory.php" class="list-group-item list-group-item-action border-0 <?php echo ($current_page == 'inventory.php') ? 'active bg-primary text-white' : ''; ?>">
+            Inventaris
+        </a>
+        <a href="<?php echo $base_url; ?>fungsi/history.php" class="list-group-item list-group-item-action border-0 <?php echo ($current_page == 'history.php') ? 'active bg-primary text-white' : ''; ?>">
+            <?php echo ($_SESSION['role'] == 'dokter') ? 'Histori Pinjam' : 'Laporan Peminjaman'; ?>
+        </a>
     </div>
 
-    <div class="mt-auto p-3 border-top">
-        <div class="d-flex align-items-center mb-3">
-            <div class="bg-primary text-white d-flex justify-content-center align-items-center rounded-circle me-2" style="width: 40px; height: 40px; font-weight: bold;">
-                <?php echo strtoupper(substr($_SESSION['nama'], 0, 1)); ?>
+    <div class="dropup bg-white" style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 1040;">
+        <div class="d-flex align-items-center justify-content-between p-3" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-weight: bold;">
+                    <?php echo substr($_SESSION['nama'], 0, 1); ?>
+                </div>
+                <div class="ms-2">
+                    <strong class="d-block text-truncate text-dark" style="font-size: 14px; max-width: 110px;"><?php echo $_SESSION['nama']; ?></strong>
+                    <span class="text-muted" style="font-size: 12px;"><?php echo ucfirst($_SESSION['role']); ?></span>
+                </div>
             </div>
-            <div style="line-height: 1.2;">
-                <strong class="d-block text-truncate" style="max-width: 120px; font-size: 0.9rem;">
-                    <?php echo $_SESSION['nama']; ?>
-                </strong>
-                <small class="text-muted text-capitalize"><?php echo $_SESSION['role']; ?></small>
-            </div>
+            <i class="bi bi-gear-fill text-secondary fs-5"></i>
         </div>
-        <a href="<?php echo $base_url; ?>logout.php" class="btn btn-outline-danger btn-sm w-100">
-            <i class="bi bi-box-arrow-right"></i> Keluar
-        </a>
+        
+        <ul class="dropdown-menu shadow border-0 w-100 mb-2">
+            <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#modalProfil"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
+            <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#modalPassword"><i class="bi bi-shield-lock me-2"></i>Ganti Password</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2 text-danger" href="<?php echo $base_url; ?>logout.php"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+        </ul>
     </div>
 </div>
