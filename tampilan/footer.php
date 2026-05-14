@@ -1,7 +1,11 @@
-<footer class="footer border-top d-flex align-items-center justify-content-center bg-body" style="position: fixed; bottom: 0; right: 0; width: 83.333333%; height: 60px; z-index: 1020;">
+<footer class="footer border-top d-flex align-items-center justify-content-between px-4 bg-body" style="position: fixed; bottom: 0; right: 0; width: 83.333333%; height: 60px; z-index: 1020;">
     <span class="text-muted small">
         &copy; <?php echo date('Y'); ?> <strong>CURA-LOG</strong> - Sistem Informasi Inventaris Alat Medis. All Rights Reserved.
     </span>
+
+    <a href="<?php echo $base_url; ?>logout.php" class="btn btn-sm btn-outline-danger d-flex align-items-center px-3" style="border-radius: 20px; font-weight: 500;" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')">
+        <i class="bi bi-box-arrow-right me-2"></i> Keluar
+    </a>
 </footer>
 
 <div class="modal fade" id="modalProfil" tabindex="-1">
@@ -10,17 +14,32 @@
             <div class="modal-header border-0 pb-0">
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center pb-4">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 32px; font-weight: bold;">
-                    <?php echo substr($_SESSION['nama'], 0, 1); ?>
+            <form action="<?php echo $base_url; ?>fungsi/proses_profil.php" method="POST" enctype="multipart/form-data">
+                <div class="modal-body text-center pb-4">
+                    <div class="position-relative d-inline-block mb-3">
+                        <?php if(!empty($_SESSION['foto'])){ ?>
+                            <img src="<?php echo $base_url; ?>assets/img/users/<?php echo $_SESSION['foto']; ?>" class="rounded-circle shadow-sm" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #0d6efd;">
+                        <?php } else { ?>
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px; font-size: 40px; font-weight: bold;">
+                                <?php echo substr($_SESSION['nama'], 0, 1); ?>
+                            </div>
+                        <?php } ?>
+                        <label for="uploadFoto" class="position-absolute bottom-0 end-0 bg-white border rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; cursor: pointer;">
+                            <i class="bi bi-camera-fill text-primary" style="font-size: 16px;"></i>
+                        </label>
+                        <input type="file" name="foto_user" id="uploadFoto" hidden onchange="this.form.submit()">
+                    </div>
+                    
+                    <h5 class="fw-bold mb-1"><?php echo $_SESSION['nama']; ?></h5>
+                    <p class="text-muted mb-3"><?php echo ucfirst($_SESSION['role']); ?></p>
+                    
+                    <div class="bg-body-secondary rounded p-2 text-start">
+                        <small class="text-muted d-block">Username / NIP:</small>
+                        <strong class="d-block"><?php echo $_SESSION['username']; ?></strong>
+                    </div>
+                    <p class="small text-muted mt-3 mb-0">Klik ikon kamera untuk ganti foto</p>
                 </div>
-                <h5 class="fw-bold mb-1"><?php echo $_SESSION['nama']; ?></h5>
-                <p class="text-muted mb-3"><?php echo ucfirst($_SESSION['role']); ?></p>
-                <div class="bg-body-secondary rounded p-2 text-start">
-                    <small class="text-muted d-block">Username / NIP:</small>
-                    <strong class="d-block"><?php echo $_SESSION['username']; ?></strong>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -61,7 +80,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const htmlElement = document.documentElement;
-
     const currentTheme = localStorage.getItem('theme');
     
     if (currentTheme === 'dark') {
@@ -84,6 +102,3 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
-
-</body>
-</html>

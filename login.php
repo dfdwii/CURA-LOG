@@ -18,6 +18,7 @@ if (isset($_POST['login'])) {
         $_SESSION['username'] = $data['username'];
         $_SESSION['nama'] = $data['nama_lengkap'];
         $_SESSION['role'] = $data['role'];
+        $_SESSION['foto'] = $data['foto'];
         
         header("Location: index.php");
     } else {
@@ -79,7 +80,7 @@ if (isset($_POST['login'])) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    
+
     const togglePassword = document.getElementById('togglePassword');
     const inputPassword = document.getElementById('inputPassword');
     const iconPassword = document.getElementById('iconPassword');
