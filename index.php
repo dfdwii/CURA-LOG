@@ -24,7 +24,7 @@ include 'tampilan/header.php';
 
         <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
             
-            <div class="sticky-top pt-4 pb-3 mb-3" style="background-color: #f8fafc; z-index: 10;">
+            <div class="sticky-top pt-4 pb-3 mb-3 bg-body" style="z-index: 10;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h2 class="m-0">Selamat Datang, <?php echo $_SESSION['nama']; ?>!</h2>

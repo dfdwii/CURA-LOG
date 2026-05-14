@@ -35,15 +35,15 @@ include '../tampilan/header.php';
 
         <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
             
-            <div class="sticky-top pt-4 pb-3 mb-3" style="background-color: #f8fafc; z-index: 10;">
+            <div class="sticky-top pt-4 pb-3 mb-3 bg-body" style="z-index: 10;">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="m-0">Inventaris Alat Medis</h2>
                     <?php if ($role != 'dokter') { ?>
-                        <a href="tambah_alat.php" class="btn btn-primary"> + Tambah Alat</a>
+                        <a href="tambah_alat.php" class="btn btn-primary btn-sm"> + Tambah Alat</a>
                     <?php } ?>
                 </div>
 
-                <form method="GET" class="row g-2 bg-white p-3 rounded shadow-sm border">
+                <form method="GET" class="row g-2 bg-body-tertiary p-3 rounded shadow-sm border">
                     <div class="col-md-5">
                         <input type="text" name="search" class="form-control" placeholder="Cari nama alat atau merk..." value="<?php echo htmlspecialchars($search); ?>">
                     </div>
@@ -66,7 +66,7 @@ include '../tampilan/header.php';
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th class="ps-3">Foto</th>
                                 <th>Nama Alat</th>
@@ -91,7 +91,7 @@ include '../tampilan/header.php';
                             $query = mysqli_query($koneksi, $sql);
                             
                             if (mysqli_num_rows($query) == 0) {
-                                echo "<tr><td colspan='6' class='text-center py-5 text-muted'><i class='bi bi-inbox fs-2 d-block mb-2 text-secondary'></i>Belum ada data alat medis.</td></tr>";
+                                echo "<tr><td colspan='6' class='text-center py-5 text-muted'><i class='bi bi-inbox fs-2 d-block mb-2 text-secondary'></i>Data alat tidak ditemukan.</td></tr>";
                             } else {
                                 while($data = mysqli_fetch_array($query)) {
                                     $warna = 'bg-secondary';
@@ -144,5 +144,110 @@ include '../tampilan/header.php';
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalStatus" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title">Ubah Status</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="id_alat_status" id="statusId">
+                    <div class="mb-3">
+                        <label class="small text-muted">Alat:</label>
+                        <input type="text" id="statusNama" class="form-control fw-bold border-0 bg-body-tertiary" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label>Pilih Status:</label>
+                        <select name="status_baru" id="statusPilihan" class="form-select" required>
+                            <option value="Tersedia">Tersedia (Kembali)</option>
+                            <option value="Rusak">Rusak</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Perlu Kalibrasi">Perlu Kalibrasi</option>
+                            <option value="Dipinjam" id="opsiDipinjam" hidden>Dipinjam</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" name="simpan_status" class="btn btn-secondary w-100">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetail" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail Alat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Nama:</strong> <span id="detNama"></span></p>
+                <p><strong>Merk:</strong> <span id="detMerk"></span></p>
+                <p><strong>Keterangan:</strong> <span id="detKet"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPinjam" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Pinjam Alat</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="proses_pinjam.php" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="id_alat" id="pinjamId">
+                    <div class="mb-3">
+                        <label>Alat:</label>
+                        <input type="text" id="pinjamNama" class="form-control bg-body-tertiary" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label>Keperluan:</label>
+                        <input type="text" name="keperluan" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Ruangan:</label>
+                        <input type="text" name="ruangan_tujuan" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" name="pinjam" class="btn btn-success w-100">Konfirmasi Pinjam</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function bukaStatus(id, nama, statusSekarang) {
+    document.getElementById('statusId').value = id;
+    document.getElementById('statusNama').value = nama;
+    const select = document.getElementById('statusPilihan');
+    const opsiDipinjam = document.getElementById('opsiDipinjam');
+    opsiDipinjam.hidden = statusSekarang !== 'Dipinjam';
+    select.value = statusSekarang;
+    new bootstrap.Modal(document.getElementById('modalStatus')).show();
+}
+
+function lihatDetail(nama, merk, ket) {
+    document.getElementById('detNama').innerText = nama;
+    document.getElementById('detMerk').innerText = merk;
+    document.getElementById('detKet').innerText = ket;
+    new bootstrap.Modal(document.getElementById('modalDetail')).show();
+}
+
+function bukaPinjam(id, nama) {
+    document.getElementById('pinjamId').value = id;
+    document.getElementById('pinjamNama').value = nama;
+    new bootstrap.Modal(document.getElementById('modalPinjam')).show();
+}
+</script>
 
 <?php include '../tampilan/footer.php'; ?>

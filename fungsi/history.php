@@ -25,7 +25,7 @@ if (isset($_GET['kembali'])) {
     $data_h = mysqli_fetch_array($cek);
 
     if ($role == 'dokter' && $data_h['id_user'] != $my_id) {
-        echo "<script>alert('Gagal!'); window.location='history.php';</script>";
+        echo "<script>alert('Gagal! Anda hanya bisa mengembalikan alat yang Anda pinjam.'); window.location='history.php';</script>";
     } else {
         mysqli_query($koneksi, "UPDATE history_peminjaman SET status_peminjaman='Dikembalikan', tgl_kembali=NOW() WHERE id_history='$id_h'");
         mysqli_query($koneksi, "UPDATE alat SET status='Tersedia' WHERE id_alat='$id_a'");
@@ -42,10 +42,10 @@ include '../tampilan/header.php';
 
         <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
             
-            <div class="sticky-top pt-4 pb-3 mb-3" style="background-color: #f8fafc; z-index: 10;">
+            <div class="sticky-top pt-4 pb-3 mb-3 bg-body" style="z-index: 10;">
                 <h3 class="m-0"><?php echo ($role == 'dokter') ? 'Histori Peminjaman' : 'Laporan Peminjaman'; ?></h3>
                 
-                <form method="GET" class="row g-2 mt-3 bg-white p-3 rounded shadow-sm border">
+                <form method="GET" class="row g-2 mt-3 bg-body-tertiary p-3 rounded shadow-sm border">
                     <div class="col-md-4">
                         <input type="text" name="s_key" class="form-control" placeholder="Cari nama alat atau dokter..." value="<?php echo htmlspecialchars($s_key); ?>">
                     </div>
@@ -64,7 +64,7 @@ include '../tampilan/header.php';
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th class="ps-3">Nama Alat</th>
                                 <th>Peminjam</th>

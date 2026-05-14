@@ -1,4 +1,4 @@
-<footer class="footer border-top d-flex align-items-center justify-content-center" style="position: fixed; bottom: 0; right: 0; width: 83.333333%; height: 60px; background-color: #ffffff; z-index: 1020;">
+<footer class="footer border-top d-flex align-items-center justify-content-center bg-body" style="position: fixed; bottom: 0; right: 0; width: 83.333333%; height: 60px; z-index: 1020;">
     <span class="text-muted small">
         &copy; <?php echo date('Y'); ?> <strong>CURA-LOG</strong> - Sistem Informasi Inventaris Alat Medis. All Rights Reserved.
     </span>
@@ -16,7 +16,7 @@
                 </div>
                 <h5 class="fw-bold mb-1"><?php echo $_SESSION['nama']; ?></h5>
                 <p class="text-muted mb-3"><?php echo ucfirst($_SESSION['role']); ?></p>
-                <div class="bg-light rounded p-2 text-start">
+                <div class="bg-body-secondary rounded p-2 text-start">
                     <small class="text-muted d-block">Username / NIP:</small>
                     <strong class="d-block"><?php echo $_SESSION['username']; ?></strong>
                 </div>
@@ -28,7 +28,7 @@
 <div class="modal fade" id="modalPassword" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-light">
+            <div class="modal-header">
                 <h5 class="modal-title">Ganti Password</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -56,5 +56,34 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const htmlElement = document.documentElement;
+
+    const currentTheme = localStorage.getItem('theme');
+    
+    if (currentTheme === 'dark') {
+        htmlElement.setAttribute('data-bs-theme', 'dark');
+        if (darkModeToggle) {
+            darkModeToggle.checked = true;
+        }
+    }
+
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                htmlElement.setAttribute('data-bs-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                htmlElement.setAttribute('data-bs-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
+});
+</script>
+
 </body>
 </html>
