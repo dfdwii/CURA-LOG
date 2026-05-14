@@ -4,6 +4,16 @@ require_once '../auth_check.php';
 
 $role = $_SESSION['role']; 
 
+if (isset($_POST['simpan_status'])) {
+    $id_alat = $_POST['id_alat_status'];
+    $status_baru = $_POST['status_baru'];
+    
+    if ($status_baru != 'Dipinjam') {
+        mysqli_query($koneksi, "UPDATE alat SET status='$status_baru' WHERE id_alat='$id_alat'");
+        echo "<script>alert('Status alat berhasil diperbarui!'); window.location='inventory.php';</script>";
+    }
+}
+
 include '../tampilan/header.php';
 ?>
 
@@ -21,7 +31,7 @@ include '../tampilan/header.php';
 
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <table class="table table-hover">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Foto</th>
@@ -45,7 +55,14 @@ include '../tampilan/header.php';
                                 <td><strong><?php echo $data['nama_alat']; ?></strong></td>
                                 <td><?php echo $data['merk']; ?></td>
                                 <td>
-                                    <span class="badge <?php echo ($data['status'] == 'Tersedia') ? 'bg-success' : 'bg-warning text-dark'; ?>">
+                                    <?php
+                                    $warna_badge = 'bg-secondary';
+                                    if ($data['status'] == 'Tersedia') $warna_badge = 'bg-success';
+                                    if ($data['status'] == 'Dipinjam') $warna_badge = 'bg-warning text-dark';
+                                    if ($data['status'] == 'Rusak') $warna_badge = 'bg-danger';
+                                    if ($data['status'] == 'Maintenance') $warna_badge = 'bg-secondary';
+                                    ?>
+                                    <span class="badge <?php echo $warna_badge; ?>">
                                         <?php echo $data['status']; ?>
                                     </span>
                                 </td>
@@ -64,6 +81,11 @@ include '../tampilan/header.php';
                                         <?php } ?>
 
                                     <?php } else { ?>
+                                        <button class="btn btn-secondary btn-sm" 
+                                                onclick="bukaStatus('<?php echo $data['id_alat']; ?>', '<?php echo $data['nama_alat']; ?>', '<?php echo $data['status']; ?>')">
+                                            Status
+                                        </button>
+                                        
                                         <a href="edit_alat.php?id=<?php echo $data['id_alat']; ?>" class="btn btn-warning btn-sm">Edit</a>
                                         <a href="hapus_alat.php?id=<?php echo $data['id_alat']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin mau hapus?')">Hapus</a>
                                     <?php } ?>
@@ -90,6 +112,43 @@ include '../tampilan/header.php';
                 <p><strong>Merk:</strong> <span id="detMerk"></span></p>
                 <p><strong>Keterangan:</strong> <span id="detKet"></span></p>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalStatus" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title">Ubah Status Alat</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="id_alat_status" id="statusId">
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Alat yang diubah:</label>
+                        <input type="text" id="statusNama" class="form-control fw-bold" readonly style="background-color: #f8f9fa; border: none;">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Pilih Status Baru:</label>
+                        <select name="status_baru" id="statusPilihan" class="form-select" required>
+                            <option value="Tersedia">Tersedia</option>
+                            <option value="Rusak">Rusak</option>
+                            <option value="Maintenance">Maintenance</option>
+                        </select>
+                        <small class="text-danger d-block mt-2" style="font-size: 11px;">
+                            *Catatan: Status 'Dipinjam' tidak dapat diubah secara manual di sini.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" name="simpan_status" class="btn btn-secondary">Simpan Status</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -132,6 +191,28 @@ function lihatDetail(nama, merk, ket) {
     document.getElementById('detMerk').innerText = merk;
     document.getElementById('detKet').innerText = ket;
     var myModal = new bootstrap.Modal(document.getElementById('modalDetail'));
+    myModal.show();
+}
+
+function bukaStatus(id, nama, statusSekarang) {
+    document.getElementById('statusId').value = id;
+    document.getElementById('statusNama').value = nama;
+    
+    let selectElement = document.getElementById('statusPilihan');
+    if(statusSekarang === 'Dipinjam') {
+        selectElement.innerHTML = '<option value="Dipinjam">Sedang Dipinjam</option>';
+        selectElement.setAttribute('disabled', 'true');
+    } else {
+        selectElement.innerHTML = `
+            <option value="Tersedia">Tersedia</option>
+            <option value="Rusak">Rusak</option>
+            <option value="Maintenance">Maintenance</option>
+        `;
+        selectElement.removeAttribute('disabled');
+        selectElement.value = statusSekarang;
+    }
+    
+    var myModal = new bootstrap.Modal(document.getElementById('modalStatus'));
     myModal.show();
 }
 
