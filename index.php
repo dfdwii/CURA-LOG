@@ -2,16 +2,44 @@
 require_once 'config.php';
 require_once 'auth_check.php';
 
-$q_notif = mysqli_query($koneksi, "SELECT * FROM alat WHERE status IN ('Rusak', 'Maintenance')");
+$q_notif = mysqli_query($koneksi, "SELECT * FROM alat WHERE status IN ('Rusak', 'Maintenance', 'Perlu Kalibrasi')");
 $notif_rusak = [];
 $notif_maint = [];
+$notif_kalibrasi = [];
 
 while($row = mysqli_fetch_array($q_notif)) {
     if($row['status'] == 'Rusak') {
         $notif_rusak[] = $row;
-    } else {
+    } else if ($row['status'] == 'Maintenance') {
         $notif_maint[] = $row;
+    } else {
+        $notif_kalibrasi[] = $row;
     }
+}
+
+$q_status = mysqli_query($koneksi, "SELECT status, COUNT(*) as jumlah FROM alat GROUP BY status");
+$label_status = [];
+$data_status = [];
+$warna_status = [];
+
+while($row = mysqli_fetch_assoc($q_status)) {
+    $label_status[] = $row['status'];
+    $data_status[] = $row['jumlah'];
+    
+    if ($row['status'] == 'Tersedia') $warna_status[] = '#198754'; 
+    else if ($row['status'] == 'Dipinjam') $warna_status[] = '#ffc107'; 
+    else if ($row['status'] == 'Rusak') $warna_status[] = '#dc3545'; 
+    else if ($row['status'] == 'Perlu Kalibrasi') $warna_status[] = '#0dcaf0'; 
+    else $warna_status[] = '#6c757d'; 
+}
+
+$q_merk = mysqli_query($koneksi, "SELECT merk, COUNT(*) as jumlah FROM alat GROUP BY merk ORDER BY jumlah DESC LIMIT 5");
+$label_merk = [];
+$data_merk = [];
+
+while($row = mysqli_fetch_assoc($q_merk)) {
+    $label_merk[] = $row['merk'] ? $row['merk'] : 'Tanpa Merk';
+    $data_merk[] = $row['jumlah'];
 }
 
 include 'tampilan/header.php';
@@ -58,57 +86,52 @@ include 'tampilan/header.php';
                         </div>
                     </div>
                 </div>
-                
+            </div>
+
+            <hr class="my-3">
+
+            <div class="row mb-4 mt-2">
                 <div class="col-md-6 mb-3">
-                    <div class="card bg-danger text-white h-100 shadow-sm border-0">
+                    <div class="card shadow-sm border-0 h-100 bg-body">
                         <div class="card-body">
-                            <h5>Alat Rusak</h5>
-                            <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat WHERE status='Rusak'")); ?></h3>
+                            <h5 class="fw-bold mb-4">Distribusi Status Alat</h5>
+                            <div style="height: 250px; display: flex; justify-content: center;">
+                                <canvas id="chartStatus"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <div class="card bg-secondary text-white h-100 shadow-sm border-0">
+                    <div class="card shadow-sm border-0 h-100 bg-body">
                         <div class="card-body">
-                            <h5>Alat Sedang Dimaintenance</h5>
-                            <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat WHERE status='Maintenance'")); ?></h3>
+                            <h5 class="fw-bold mb-4">Top 5 Merk Alat Terbanyak</h5>
+                            <div style="height: 250px;">
+                                <canvas id="chartMerk"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <hr class="my-4">
-
             <h5 class="mb-3 fw-bold">Notifikasi Penting</h5>
             
-            <?php if(count($notif_rusak) == 0 && count($notif_maint) == 0) { ?>
-                <div class="alert alert-success shadow-sm">Tidak ada alat yang rusak atau sedang dimaintenance saat ini.</div>
+            <?php if(count($notif_rusak) == 0 && count($notif_maint) == 0 && count($notif_kalibrasi) == 0) { ?>
+                <div class="alert alert-success shadow-sm">Kondisi inventaris sangat baik. Tidak ada alat yang bermasalah.</div>
             <?php } ?>
 
             <?php if(count($notif_rusak) > 0) { ?>
-            <div class="card border-danger mb-3 shadow-sm">
-                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center" 
-                     style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseRusak">
-                    <span><i class="bi bi-exclamation-triangle-fill"></i> <strong>Alat Rusak:</strong> Terdapat <?= count($notif_rusak) ?> alat yang rusak. Klik untuk melihat detail.</span>
+            <div class="card border-danger mb-3 shadow-sm bg-body">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseRusak">
+                    <span><i class="bi bi-exclamation-triangle-fill"></i> <strong>Alat Rusak:</strong> <?= count($notif_rusak) ?> alat.</span>
                     <i class="bi bi-chevron-down"></i>
                 </div>
                 <div id="collapseRusak" class="collapse">
                     <div class="card-body p-0">
                         <table class="table table-bordered mb-0">
-                            <thead class="table-danger">
-                                <tr>
-                                    <th>Nama Alat</th>
-                                    <th>Merk</th>
-                                    <th>Keterangan</th>
-                                </tr>
-                            </thead>
+                            <thead class="table-danger"><tr><th>Nama Alat</th><th>Merk</th><th>Keterangan</th></tr></thead>
                             <tbody>
                                 <?php foreach($notif_rusak as $r) { ?>
-                                <tr>
-                                    <td><strong><?php echo $r['nama_alat']; ?></strong></td>
-                                    <td><?php echo $r['merk']; ?></td>
-                                    <td><?php echo $r['keterangan'] ? $r['keterangan'] : '-'; ?></td>
-                                </tr>
+                                <tr><td><strong><?= $r['nama_alat']; ?></strong></td><td><?= $r['merk']; ?></td><td><?= $r['keterangan'] ? htmlspecialchars($r['keterangan']) : '-'; ?></td></tr>
                                 <?php } ?>
                             </tbody>
                         </table>
@@ -118,29 +141,18 @@ include 'tampilan/header.php';
             <?php } ?>
 
             <?php if(count($notif_maint) > 0) { ?>
-            <div class="card border-secondary mb-4 shadow-sm">
-                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center" 
-                     style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseMaint">
-                    <span><i class="bi bi-tools"></i> <strong>Alat Maintenance:</strong> Terdapat <?= count($notif_maint) ?> alat yang sedang dimaintenance. Klik untuk detail.</span>
+            <div class="card border-secondary mb-3 shadow-sm bg-body">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseMaint">
+                    <span><i class="bi bi-tools"></i> <strong>Maintenance:</strong> <?= count($notif_maint) ?> alat.</span>
                     <i class="bi bi-chevron-down"></i>
                 </div>
                 <div id="collapseMaint" class="collapse">
                     <div class="card-body p-0">
                         <table class="table table-bordered mb-0">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th>Nama Alat</th>
-                                    <th>Merk</th>
-                                    <th>Keterangan</th>
-                                </tr>
-                            </thead>
+                            <thead class="table-secondary"><tr><th>Nama Alat</th><th>Merk</th><th>Keterangan</th></tr></thead>
                             <tbody>
                                 <?php foreach($notif_maint as $m) { ?>
-                                <tr>
-                                    <td><strong><?php echo $m['nama_alat']; ?></strong></td>
-                                    <td><?php echo $m['merk']; ?></td>
-                                    <td><?php echo $m['keterangan'] ? $m['keterangan'] : '-'; ?></td>
-                                </tr>
+                                <tr><td><strong><?= $m['nama_alat']; ?></strong></td><td><?= $m['merk']; ?></td><td><?= $m['keterangan'] ? htmlspecialchars($m['keterangan']) : '-'; ?></td></tr>
                                 <?php } ?>
                             </tbody>
                         </table>
@@ -149,17 +161,33 @@ include 'tampilan/header.php';
             </div>
             <?php } ?>
 
-            <h5 class="mb-3 mt-5 fw-bold">Alat Terbaru Ditambahkan</h5>
-            <div class="card shadow-sm mb-4 border-0">
+            <?php if(count($notif_kalibrasi) > 0) { ?>
+            <div class="card border-info mb-4 shadow-sm bg-body">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseKalibrasi">
+                    <span><i class="bi bi-speedometer2"></i> <strong>Perlu Kalibrasi:</strong> <?= count($notif_kalibrasi) ?> alat.</span>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+                <div id="collapseKalibrasi" class="collapse">
+                    <div class="card-body p-0">
+                        <table class="table table-bordered mb-0">
+                            <thead class="table-info"><tr><th>Nama Alat</th><th>Merk</th><th>Keterangan</th></tr></thead>
+                            <tbody>
+                                <?php foreach($notif_kalibrasi as $k) { ?>
+                                <tr><td><strong><?= $k['nama_alat']; ?></strong></td><td><?= $k['merk']; ?></td><td><?= $k['keterangan'] ? htmlspecialchars($k['keterangan']) : '-'; ?></td></tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <?php } ?>
+
+            <h5 class="mb-3 mt-4 fw-bold">Alat Terbaru Ditambahkan</h5>
+            <div class="card shadow-sm mb-4 border-0 bg-body">
                 <div class="card-body p-0">
                     <table class="table table-striped table-hover mb-0 align-middle">
                         <thead class="table-primary">
-                            <tr>
-                                <th class="ps-3">Foto</th>
-                                <th>Nama Alat</th>
-                                <th>Merk</th>
-                                <th>Status</th>
-                            </tr>
+                            <tr><th class="ps-3">Foto</th><th>Nama Alat</th><th>Merk</th><th>Status</th></tr>
                         </thead>
                         <tbody>
                             <?php
@@ -167,14 +195,10 @@ include 'tampilan/header.php';
                             while($b = mysqli_fetch_array($q_baru)) {
                             ?>
                             <tr>
-                                <td class="ps-3"><img src="assets/img/alat_medis/<?php echo $b['gambar']; ?>" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"></td>
-                                <td><strong><?php echo $b['nama_alat']; ?></strong></td>
-                                <td><?php echo $b['merk']; ?></td>
-                                <td>
-                                    <span class="badge <?php echo ($b['status'] == 'Tersedia') ? 'bg-success' : 'bg-secondary'; ?>">
-                                        <?php echo $b['status']; ?>
-                                    </span>
-                                </td>
+                                <td class="ps-3"><img src="assets/img/alat_medis/<?php echo htmlspecialchars($b['gambar']); ?>" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"></td>
+                                <td><strong><?php echo htmlspecialchars($b['nama_alat']); ?></strong></td>
+                                <td><?php echo htmlspecialchars($b['merk']); ?></td>
+                                <td><span class="badge <?php echo ($b['status'] == 'Tersedia') ? 'bg-success' : 'bg-secondary'; ?>"><?php echo htmlspecialchars($b['status']); ?></span></td>
                             </tr>
                             <?php } ?>
                         </tbody>
@@ -183,7 +207,7 @@ include 'tampilan/header.php';
             </div>
 
             <h5 class="mb-3 mt-4 fw-bold">Peminjaman Aktif</h5>
-            <div class="card shadow-sm mb-4 border-0">
+            <div class="card shadow-sm mb-4 border-0 bg-body">
                 <div class="card-body p-0">
                     <table class="table table-striped table-hover mb-0 align-middle">
                         <thead class="table-warning">
@@ -203,15 +227,15 @@ include 'tampilan/header.php';
                                                                 WHERE h.status_peminjaman = 'Dipinjam' 
                                                                 ORDER BY h.id_history DESC LIMIT 5");
                             if(mysqli_num_rows($q_pinjam) == 0) {
-                                echo "<tr><td colspan='4' class='text-center py-3'>Tidak ada alat yang sedang dipinjam saat ini.</td></tr>";
+                                echo "<tr><td colspan='4' class='text-center py-4 text-muted'>Tidak ada alat yang sedang dipinjam saat ini.</td></tr>";
                             } else {
                                 while($p = mysqli_fetch_array($q_pinjam)) {
                             ?>
                             <tr>
-                                <td class="ps-3"><strong><?php echo $p['nama_alat']; ?></strong></td>
-                                <td><?php echo $p['nama_lengkap']; ?></td>
-                                <td><?php echo $p['keperluan']; ?></td>
-                                <td><?php echo $p['tgl_pinjam']; ?></td>
+                                <td class="ps-3"><strong><?php echo htmlspecialchars($p['nama_alat']); ?></strong></td>
+                                <td><?php echo htmlspecialchars($p['nama_lengkap']); ?></td>
+                                <td><?php echo htmlspecialchars($p['keperluan']); ?></td>
+                                <td><?php echo date('d M Y, H:i', strtotime($p['tgl_pinjam'])); ?></td>
                             </tr>
                             <?php } } ?>
                         </tbody>
@@ -222,5 +246,67 @@ include 'tampilan/header.php';
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Chart.defaults.color = '#858796';
+    Chart.defaults.font.family = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
+
+    const ctxStatus = document.getElementById('chartStatus').getContext('2d');
+    new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+            labels: <?php echo json_encode($label_status); ?>,
+            datasets: [{
+                data: <?php echo json_encode($data_status); ?>,
+                backgroundColor: <?php echo json_encode($warna_status); ?>,
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            },
+            cutout: '70%' 
+        }
+    });
+
+    const ctxMerk = document.getElementById('chartMerk').getContext('2d');
+    new Chart(ctxMerk, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($label_merk); ?>,
+            datasets: [{
+                label: 'Jumlah Alat',
+                data: <?php echo json_encode($data_merk); ?>,
+                backgroundColor: '#0d6efd', 
+                borderRadius: 5, 
+                barThickness: 30
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false } 
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 } 
+                },
+                x: {
+                    grid: { display: false } 
+                }
+            }
+        }
+    });
+});
+</script>
 
 <?php include 'tampilan/footer.php'; ?>
