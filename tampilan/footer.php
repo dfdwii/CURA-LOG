@@ -1,9 +1,9 @@
-<footer class="footer border-top d-flex align-items-center justify-content-between px-4 bg-body" style="position: fixed; bottom: 0; right: 0; width: 83.333333%; height: 60px; z-index: 1020;">
+<footer class="footer border-top d-flex align-items-center justify-content-between px-4 bg-body footer-desktop" style="position: fixed; bottom: 0; right: 0; height: 60px; z-index: 1020;">
     <span class="text-muted small">
         &copy; <?php echo date('Y'); ?> <strong>CURA-LOG</strong> - Sistem Informasi Inventaris Alat Medis. All Rights Reserved.
     </span>
 
-    <a href="<?php echo $base_url; ?>logout.php" class="btn btn-sm btn-outline-danger d-flex align-items-center px-3" style="border-radius: 20px; font-weight: 500;" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')">
+    <a href="<?php echo $base_url; ?>logout.php" class="btn btn-sm btn-outline-danger px-3 d-none d-md-flex align-items-center" style="border-radius: 20px; font-weight: 500;" onclick="return confirm('Apakah Anda yakin ingin keluar dari sistem?')">
         <i class="bi bi-box-arrow-right me-2"></i> Keluar
     </a>
 </footer>
@@ -102,3 +102,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
+
+</body>
+</html>

@@ -1,73 +1,14 @@
 :root {
---biru-rs: #0057B8;
---abu-bg: #f8fafc;
+    --biru-rs: #0057B8;
+    --abu-bg: #f8fafc;
 }
 
 body {
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.sidebar {
-min-height: 100vh;
-border-right: 2px solid gray;
-}
-
-.sb-brand {
-padding: 18px 20px;
-border-bottom: 2px solid #dee2e6;
-text-align: center;
-}
-
-.sb-brand h4 {
-color: var(--biru-rs);
-font-weight: bold;
-margin: 0;
-}
-
-.table thead th {
-color: #64748b;
-font-size: 12px;
-text-transform: uppercase;
-}
-
-.img-alat {
-width: 50px;
-height: 50px;
-object-fit: cover;
-border-radius: 5px;
-}
-
-.card-regis {
-margin-top: 50px;
-margin-bottom: 50px;
-}
-
-body {
-    position: relative;
-    padding-bottom: 60px;
-}
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 83.333333%;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-}
-
-@media (max-width: 767.98px) {
-    .footer {
-        width: 100%;
-    }
-}
-
-body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+    padding-bottom: 60px;
+    position: relative;
 }
 
 .sidebar {
@@ -78,6 +19,37 @@ body {
     width: 16.666667%;
     z-index: 1030;
     overflow-y: auto;
+    border-right: 2px solid #dee2e6;
+}
+
+.sb-brand {
+    padding: 18px 20px;
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+}
+
+.sb-brand h4 {
+    color: var(--biru-rs);
+    font-weight: bold;
+    margin: 0;
+}
+
+.table thead th {
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.img-alat {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.card-regis {
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .footer {
@@ -91,15 +63,17 @@ body {
     align-items: center;
     justify-content: center;
     border-top: 1px solid #dee2e6;
+    background-color: #ffffff;
 }
-
 
 @media (max-width: 767.98px) {
     .sidebar {
         position: relative;
         width: 100%;
         height: auto;
+        border-right: none;
     }
+    
     .footer {
         width: 100%;
     }

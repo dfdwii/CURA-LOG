@@ -18,7 +18,9 @@ if ($f_status != '') $url_query .= "&f_status=" . urlencode($f_status);
 if (isset($_POST['simpan_status'])) {
     $id_alat = $_POST['id_alat_status'];
     $status_baru = $_POST['status_baru'];
+    
     mysqli_query($koneksi, "UPDATE alat SET status='$status_baru' WHERE id_alat='$id_alat'");
+    
     if ($status_baru == 'Tersedia') {
         mysqli_query($koneksi, "UPDATE history_peminjaman SET status_peminjaman='Dikembalikan', tgl_kembali=NOW() 
                                 WHERE id_alat='$id_alat' AND status_peminjaman='Dipinjam'");
@@ -33,7 +35,7 @@ include '../tampilan/header.php';
     <div class="row">
         <?php include '../tampilan/sidebar.php'; ?>
 
-        <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
+        <div class="main-content px-4 pt-0">
             
             <div class="sticky-top pt-4 pb-3 mb-3 bg-body" style="z-index: 10;">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -63,63 +65,65 @@ include '../tampilan/header.php';
                 </form>
             </div>
 
-            <div class="card shadow-sm border-0 mb-4">
+            <div class="card shadow-sm border-0 mb-4 bg-body">
                 <div class="card-body p-0">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th class="ps-3">Foto</th>
-                                <th>Nama Alat</th>
-                                <th>Merk</th>
-                                <th>Tgl Masuk</th>
-                                <th>Status</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $where = "WHERE 1=1";
-                            if ($search != '') $where .= " AND (nama_alat LIKE '%$search%' OR merk LIKE '%$search%')";
-                            if ($f_status != '') $where .= " AND status = '$f_status'";
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">Foto</th>
+                                    <th>Nama Alat</th>
+                                    <th>Merk</th>
+                                    <th>Tgl Masuk</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $where = "WHERE 1=1";
+                                if ($search != '') $where .= " AND (nama_alat LIKE '%$search%' OR merk LIKE '%$search%')";
+                                if ($f_status != '') $where .= " AND status = '$f_status'";
 
-                            $q_count = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM alat $where");
-                            $row_count = mysqli_fetch_assoc($q_count);
-                            $total_data = $row_count['total'];
-                            $total_pages = ceil($total_data / $limit);
+                                $q_count = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM alat $where");
+                                $row_count = mysqli_fetch_assoc($q_count);
+                                $total_data = $row_count['total'];
+                                $total_pages = ceil($total_data / $limit);
 
-                            $sql = "SELECT * FROM alat $where ORDER BY id_alat DESC LIMIT $limit OFFSET $offset";
-                            $query = mysqli_query($koneksi, $sql);
-                            
-                            if (mysqli_num_rows($query) == 0) {
-                                echo "<tr><td colspan='6' class='text-center py-5 text-muted'><i class='bi bi-inbox fs-2 d-block mb-2 text-secondary'></i>Data alat tidak ditemukan.</td></tr>";
-                            } else {
-                                while($data = mysqli_fetch_array($query)) {
-                                    $warna = 'bg-secondary';
-                                    if ($data['status'] == 'Tersedia') $warna = 'bg-success';
-                                    if ($data['status'] == 'Dipinjam') $warna = 'bg-warning text-dark';
-                                    if ($data['status'] == 'Rusak') $warna = 'bg-danger';
-                                    if ($data['status'] == 'Perlu Kalibrasi') $warna = 'bg-info text-white';
-                            ?>
-                            <tr>
-                                <td class="ps-3"><img src="../assets/img/alat_medis/<?php echo $data['gambar']; ?>" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"></td>
-                                <td><strong><?php echo $data['nama_alat']; ?></strong></td>
-                                <td><?php echo $data['merk']; ?></td>
-                                <td><small class="text-muted"><?php echo date('d M Y', strtotime($data['tgl_masuk'])); ?></small></td>
-                                <td><span class="badge <?php echo $warna; ?>"><?php echo $data['status']; ?></span></td>
-                                <td class="text-center">
-                                    <button class="btn btn-info btn-sm text-white" onclick="lihatDetail('<?php echo $data['nama_alat']; ?>', '<?php echo $data['merk']; ?>', '<?php echo htmlspecialchars($data['keterangan']); ?>')">Detail</button>
-                                    <?php if ($role != 'dokter') { ?>
-                                        <button class="btn btn-secondary btn-sm" onclick="bukaStatus('<?php echo $data['id_alat']; ?>', '<?php echo htmlspecialchars($data['nama_alat']); ?>', '<?php echo $data['status']; ?>')">Status</button>
-                                        <a href="edit_alat.php?id=<?php echo $data['id_alat']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="hapus_alat.php?id=<?php echo $data['id_alat']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</a>
-                                    <?php } else if ($data['status'] == 'Tersedia') { ?>
-                                        <button class="btn btn-success btn-sm" onclick="bukaPinjam('<?php echo $data['id_alat']; ?>', '<?php echo htmlspecialchars($data['nama_alat']); ?>')">Pinjam</button>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <?php } } ?>
-                        </tbody>
-                    </table>
+                                $sql = "SELECT * FROM alat $where ORDER BY id_alat DESC LIMIT $limit OFFSET $offset";
+                                $query = mysqli_query($koneksi, $sql);
+                                
+                                if (mysqli_num_rows($query) == 0) {
+                                    echo "<tr><td colspan='6' class='text-center py-5 text-muted'><i class='bi bi-inbox fs-2 d-block mb-2 text-secondary'></i>Data alat tidak ditemukan.</td></tr>";
+                                } else {
+                                    while($data = mysqli_fetch_array($query)) {
+                                        $warna = 'bg-secondary';
+                                        if ($data['status'] == 'Tersedia') $warna = 'bg-success';
+                                        if ($data['status'] == 'Dipinjam') $warna = 'bg-warning text-dark';
+                                        if ($data['status'] == 'Rusak') $warna = 'bg-danger';
+                                        if ($data['status'] == 'Perlu Kalibrasi') $warna = 'bg-info text-white';
+                                ?>
+                                <tr>
+                                    <td class="ps-3"><img src="../assets/img/alat_medis/<?php echo htmlspecialchars($data['gambar']); ?>" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"></td>
+                                    <td><strong><?php echo htmlspecialchars($data['nama_alat']); ?></strong></td>
+                                    <td><?php echo htmlspecialchars($data['merk']); ?></td>
+                                    <td><small class="text-muted"><?php echo date('d M Y', strtotime($data['tgl_masuk'])); ?></small></td>
+                                    <td><span class="badge <?php echo $warna; ?>"><?php echo htmlspecialchars($data['status']); ?></span></td>
+                                    <td class="text-center" style="min-width: 180px;">
+                                        <button class="btn btn-info btn-sm text-white" onclick="lihatDetail('<?php echo htmlspecialchars($data['nama_alat']); ?>', '<?php echo htmlspecialchars($data['merk']); ?>', '<?php echo htmlspecialchars($data['keterangan']); ?>')">Detail</button>
+                                        <?php if ($role != 'dokter') { ?>
+                                            <button class="btn btn-secondary btn-sm" onclick="bukaStatus('<?php echo $data['id_alat']; ?>', '<?php echo htmlspecialchars($data['nama_alat']); ?>', '<?php echo htmlspecialchars($data['status']); ?>')">Status</button>
+                                            <a href="edit_alat.php?id=<?php echo $data['id_alat']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="hapus_alat.php?id=<?php echo $data['id_alat']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</a>
+                                        <?php } else if ($data['status'] == 'Tersedia') { ?>
+                                            <button class="btn btn-success btn-sm" onclick="bukaPinjam('<?php echo $data['id_alat']; ?>', '<?php echo htmlspecialchars($data['nama_alat']); ?>')">Pinjam</button>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <?php } } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

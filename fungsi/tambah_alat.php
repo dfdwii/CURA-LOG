@@ -14,6 +14,17 @@ if (isset($_POST['simpan'])) {
     $tmp  = $_FILES['foto']['tmp_name'];
     $path = "../assets/img/alat_medis/" . $foto;
 
+    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $_FILES['foto']['tmp_name']);
+
+    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+    $nama_file = uniqid() . '.' . $ext;
+
+    if (!in_array($mime, $allowed)) { 
+        die("Tipe file tidak diizinkan!"); 
+    }
+
     if (move_uploaded_file($tmp, $path)) {
         $sql = "INSERT INTO alat (nama_alat, merk, kategori, keterangan, gambar, status) 
                 VALUES ('$nama', '$merk', '$kategori', '$ket', '$foto', 'Tersedia')";
