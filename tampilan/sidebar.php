@@ -6,7 +6,9 @@
         <div class="list-group list-group-flush mt-2">
             <a href="<?php echo $base_url; ?>index.php" class="list-group-item list-group-item-action <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">Dashboard</a>
             <a href="<?php echo $base_url; ?>fungsi/inventory.php" class="list-group-item list-group-item-action <?php echo basename($_SERVER['PHP_SELF']) == 'inventory.php' ? 'active' : ''; ?>">Inventaris</a>
-            <a href="<?php echo $base_url; ?>fungsi/history.php" class="list-group-item list-group-item-action <?php echo basename($_SERVER['PHP_SELF']) == 'history.php' ? 'active' : ''; ?>">Histori Pinjam</a>
+            <a href="<?php echo $base_url; ?>fungsi/history.php" class="list-group-item list-group-item-action"><?php echo ($_SESSION['role'] == 'dokter') ? 'Histori Pinjam' : 'Laporan Peminjaman'; ?>
+        </a>
+
         </div>
     </div>
 
