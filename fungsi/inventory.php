@@ -1,14 +1,7 @@
 <?php
 require_once '../config.php';
 require_once '../auth_check.php';
-global $koneksi;
-if(!isset($_SESSION['username'])) {
-    header("Location: ../login.php");
-    exit;
-}
 
-$pageTitle = "Daftar Alat Medis";
-// Ambil role pengguna yang sedang login
 $role = $_SESSION['role']; 
 
 include '../tampilan/header.php';
@@ -16,22 +9,11 @@ include '../tampilan/header.php';
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 sidebar p-0">
-            <div class="sb-brand">
-                <h4>CURA-LOG</h4>
-            </div>
-            <div class="list-group list-group-flush">
-                <a href="../index.php" class="list-group-item list-group-item-action">Dashboard</a>
-                <a href="inventory.php" class="list-group-item list-group-item-action active">Inventaris</a>
-                <a href="history.php" class="list-group-item list-group-item-action">Histori Pinjam</a>
-                <a href="../logout.php" class="list-group-item list-group-item-action text-danger">Keluar</a>
-            </div>
-        </div>
+        <?php include '../tampilan/sidebar.php'; ?>
 
         <div class="col-md-10 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Inventaris Alat Medis</h2>
-                
                 <?php if ($role != 'dokter') { ?>
                     <a href="tambah_alat.php" class="btn btn-primary"> + Tambah Alat</a>
                 <?php } ?>
@@ -145,7 +127,6 @@ include '../tampilan/header.php';
 </div>
 
 <script>
-// Fungsi untuk memunculkan modal detail
 function lihatDetail(nama, merk, ket) {
     document.getElementById('detNama').innerText = nama;
     document.getElementById('detMerk').innerText = merk;
@@ -154,7 +135,6 @@ function lihatDetail(nama, merk, ket) {
     myModal.show();
 }
 
-// Fungsi untuk memunculkan modal pinjam
 function bukaPinjam(id, nama) {
     document.getElementById('pinjamId').value = id;
     document.getElementById('pinjamNama').value = nama;

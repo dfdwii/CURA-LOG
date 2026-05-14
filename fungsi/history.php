@@ -1,7 +1,6 @@
 <?php
 require_once '../config.php';
 require_once '../auth_check.php';
-global $koneksi;
 
 $role = $_SESSION['role'];
 $my_id = $_SESSION['user_id'];
@@ -27,17 +26,7 @@ include '../tampilan/header.php';
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 sidebar p-0">
-            <div class="sb-brand">
-                <h4>CURA-LOG</h4>
-            </div>
-            <div class="list-group list-group-flush">
-                <a href="../index.php" class="list-group-item list-group-item-action">Dashboard</a>
-                <a href="inventory.php" class="list-group-item list-group-item-action">Inventaris</a>
-                <a href="history.php" class="list-group-item list-group-item-action active">Histori Pinjam</a>
-                <a href="../logout.php" class="list-group-item list-group-item-action text-danger">Keluar</a>
-            </div>
-        </div>
+        <?php include '../tampilan/sidebar.php'; ?>
 
         <div class="col-md-10 p-4">
             <h3>Histori Peminjaman</h3>
@@ -53,16 +42,16 @@ include '../tampilan/header.php';
             <hr>
             
             <div class="card shadow-sm">
-                <div class="card-body">
-                    <table class="table table-bordered table-hover bg-white">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
                         <thead>
-                            <tr>
-                                <th>Nama Alat</th>
+                            <tr class="table-light">
+                                <th class="ps-3">Nama Alat</th>
                                 <th>Peminjam</th>
                                 <th>Tgl Pinjam</th>
                                 <th>Tgl Kembali</th>
                                 <th>Status</th>
-                                <th>Aksi</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,13 +72,13 @@ include '../tampilan/header.php';
                             $q = mysqli_query($koneksi, $sql);
                             
                             if (mysqli_num_rows($q) == 0) {
-                                echo "<tr><td colspan='6' class='text-center'>Tidak ada data histori.</td></tr>";
+                                echo "<tr><td colspan='6' class='text-center py-4 text-muted'>Tidak ada data histori.</td></tr>";
                             }
 
                             while($h = mysqli_fetch_array($q)) {
                             ?>
                             <tr>
-                                <td><?php echo $h['nama_alat']; ?></td>
+                                <td class="ps-3"><?php echo $h['nama_alat']; ?></td>
                                 <td><?php echo $h['nama_lengkap']; ?></td>
                                 <td><?php echo $h['tgl_pinjam']; ?></td>
                                 <td><?php echo ($h['tgl_kembali'] == "") ? "-" : $h['tgl_kembali']; ?></td>
@@ -98,7 +87,7 @@ include '../tampilan/header.php';
                                         <?php echo $h['status_peminjaman']; ?>
                                     </span>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <?php if($h['status_peminjaman'] == 'Dipinjam') { ?>
                                         <a href="history.php?kembali=<?php echo $h['id_history']; ?>&alat=<?php echo $h['id_alat']; ?>" 
                                            class="btn btn-sm btn-primary" 
