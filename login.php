@@ -33,9 +33,10 @@ if (isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CURA-LOG</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/style.css">
 </head>
-<body>
+<body class="bg-light">
 
 <div class="container">
     <div class="row justify-content-center">
@@ -55,7 +56,12 @@ if (isset($_POST['login'])) {
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="password" id="inputPassword" class="form-control" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye-slash" id="iconPassword"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="mt-4">
                             <button type="submit" name="login" class="btn btn-primary w-100">Masuk</button>
@@ -72,5 +78,18 @@ if (isset($_POST['login'])) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    
+    const togglePassword = document.getElementById('togglePassword');
+    const inputPassword = document.getElementById('inputPassword');
+    const iconPassword = document.getElementById('iconPassword');
+
+    togglePassword.addEventListener('click', function () {
+        const type = inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        inputPassword.setAttribute('type', type);
+        iconPassword.classList.toggle('bi-eye');
+        iconPassword.classList.toggle('bi-eye-slash');
+    });
+</script>
 </body>
 </html>

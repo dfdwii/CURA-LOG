@@ -25,12 +25,15 @@ include '../tampilan/header.php';
     <div class="row">
         <?php include '../tampilan/sidebar.php'; ?>
 
-        <div class="col-md-10 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Inventaris Alat Medis</h2>
-                <?php if ($role != 'dokter') { ?>
-                    <a href="tambah_alat.php" class="btn btn-primary"> + Tambah Alat</a>
-                <?php } ?>
+        <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
+            
+            <div class="sticky-top pt-4 pb-3 mb-3" style="background-color: #f8fafc; z-index: 10;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="m-0">Inventaris Alat Medis</h2>
+                    <?php if ($role != 'dokter') { ?>
+                        <a href="tambah_alat.php" class="btn btn-primary"> + Tambah Alat</a>
+                    <?php } ?>
+                </div>
             </div>
 
             <div class="card shadow-sm">

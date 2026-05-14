@@ -19,15 +19,23 @@ include 'tampilan/header.php';
 
 <div class="container-fluid">
     <div class="row">
+        
         <?php include 'tampilan/sidebar.php'; ?>
 
-        <div class="col-md-10 p-4">
-            <h2>Selamat Datang, <?php echo $_SESSION['nama']; ?>!</h2>
-            <p class="text-muted">Ini adalah ringkasan inventaris rumah sakit hari ini.</p>
+        <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
             
-            <div class="row mt-4">
+            <div class="sticky-top pt-4 pb-3 mb-3" style="background-color: #f8fafc; z-index: 10;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="m-0">Selamat Datang, <?php echo $_SESSION['nama']; ?>!</h2>
+                        <p class="text-muted m-0 mt-1">Ini adalah ringkasan inventaris rumah sakit hari ini.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
                 <div class="col-md-4 mb-3">
-                    <div class="card bg-primary text-white h-100 shadow-sm">
+                    <div class="card bg-primary text-white h-100 shadow-sm border-0">
                         <div class="card-body">
                             <h5>Total Alat</h5>
                             <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat")); ?></h3>
@@ -35,7 +43,7 @@ include 'tampilan/header.php';
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card bg-success text-white h-100 shadow-sm">
+                    <div class="card bg-success text-white h-100 shadow-sm border-0">
                         <div class="card-body">
                             <h5>Tersedia</h5>
                             <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat WHERE status='Tersedia'")); ?></h3>
@@ -43,7 +51,7 @@ include 'tampilan/header.php';
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card bg-warning text-dark h-100 shadow-sm">
+                    <div class="card bg-warning text-dark h-100 shadow-sm border-0">
                         <div class="card-body">
                             <h5>Sedang Dipinjam</h5>
                             <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat WHERE status='Dipinjam'")); ?></h3>
@@ -52,7 +60,7 @@ include 'tampilan/header.php';
                 </div>
                 
                 <div class="col-md-6 mb-3">
-                    <div class="card bg-danger text-white h-100 shadow-sm">
+                    <div class="card bg-danger text-white h-100 shadow-sm border-0">
                         <div class="card-body">
                             <h5>Alat Rusak</h5>
                             <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat WHERE status='Rusak'")); ?></h3>
@@ -60,7 +68,7 @@ include 'tampilan/header.php';
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <div class="card bg-secondary text-white h-100 shadow-sm">
+                    <div class="card bg-secondary text-white h-100 shadow-sm border-0">
                         <div class="card-body">
                             <h5>Alat Sedang Dimaintenance</h5>
                             <h3><?php echo mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM alat WHERE status='Maintenance'")); ?></h3>
@@ -142,12 +150,12 @@ include 'tampilan/header.php';
             <?php } ?>
 
             <h5 class="mb-3 mt-5 fw-bold">Alat Terbaru Ditambahkan</h5>
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4 border-0">
                 <div class="card-body p-0">
-                    <table class="table table-striped table-hover mb-0">
+                    <table class="table table-striped table-hover mb-0 align-middle">
                         <thead class="table-primary">
                             <tr>
-                                <th>Foto</th>
+                                <th class="ps-3">Foto</th>
                                 <th>Nama Alat</th>
                                 <th>Merk</th>
                                 <th>Status</th>
@@ -159,7 +167,7 @@ include 'tampilan/header.php';
                             while($b = mysqli_fetch_array($q_baru)) {
                             ?>
                             <tr>
-                                <td><img src="assets/img/alat_medis/<?php echo $b['gambar']; ?>" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"></td>
+                                <td class="ps-3"><img src="assets/img/alat_medis/<?php echo $b['gambar']; ?>" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"></td>
                                 <td><strong><?php echo $b['nama_alat']; ?></strong></td>
                                 <td><?php echo $b['merk']; ?></td>
                                 <td>
@@ -175,12 +183,12 @@ include 'tampilan/header.php';
             </div>
 
             <h5 class="mb-3 mt-4 fw-bold">Peminjaman Aktif</h5>
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4 border-0">
                 <div class="card-body p-0">
-                    <table class="table table-striped table-hover mb-0">
+                    <table class="table table-striped table-hover mb-0 align-middle">
                         <thead class="table-warning">
                             <tr>
-                                <th>Nama Alat</th>
+                                <th class="ps-3">Nama Alat</th>
                                 <th>Dipinjam Oleh</th>
                                 <th>Keperluan</th>
                                 <th>Tgl Pinjam</th>
@@ -200,7 +208,7 @@ include 'tampilan/header.php';
                                 while($p = mysqli_fetch_array($q_pinjam)) {
                             ?>
                             <tr>
-                                <td><strong><?php echo $p['nama_alat']; ?></strong></td>
+                                <td class="ps-3"><strong><?php echo $p['nama_alat']; ?></strong></td>
                                 <td><?php echo $p['nama_lengkap']; ?></td>
                                 <td><?php echo $p['keperluan']; ?></td>
                                 <td><?php echo $p['tgl_pinjam']; ?></td>
