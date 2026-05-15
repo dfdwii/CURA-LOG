@@ -1,6 +1,7 @@
 <?php
 require_once '../config.php';
 require_once '../auth_check.php';
+global $koneksi;
 
 $role = $_SESSION['role'];
 $my_id = $_SESSION['user_id'];
@@ -40,29 +41,37 @@ include '../tampilan/header.php';
     <div class="row">
         <?php include '../tampilan/sidebar.php'; ?>
 
-        <div class="col-md-10 offset-md-2 px-4 pt-0" style="padding-bottom: 80px;">
-            
-            <div class="sticky-top pt-4 pb-3 mb-3 bg-body" style="z-index: 10;">
-                <h3 class="m-0"><?php echo ($role == 'dokter') ? 'Histori Peminjaman' : 'Laporan Peminjaman'; ?></h3>
-                
-                <form method="GET" class="row g-2 mt-3 bg-body-tertiary p-3 rounded shadow-sm border">
-                    <div class="col-md-4">
-                        <input type="text" name="s_key" class="form-control" placeholder="Cari nama alat atau dokter..." value="<?php echo htmlspecialchars($s_key); ?>">
-                    </div>
-                    <div class="col-md-3">
-                        <input type="date" name="tgl_mulai" class="form-control" value="<?php echo htmlspecialchars($tgl_mulai); ?>">
-                    </div>
-                    <div class="col-md-3">
-                        <input type="date" name="tgl_akhir" class="form-control" value="<?php echo htmlspecialchars($tgl_akhir); ?>">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">Filter Data</button>
+        <div class="main-content px-4 pt-0">
+
+            <!-- Page Header -->
+            <div class="sticky-top pt-4 pb-3 mb-3" style="z-index:10;">
+                <div class="mb-3">
+                    <h2 class="m-0"><?php echo ($role == 'dokter') ? 'Histori Peminjaman' : 'Laporan Peminjaman'; ?></h2>
+                    <p class="text-muted m-0 mt-1" style="font-size:13.5px;">Riwayat seluruh transaksi peminjaman alat medis</p>
+                </div>
+
+                <!-- Filter bar -->
+                <form method="GET" class="filter-bar">
+                    <div class="filter-bar-inner flex-wrap gap-2">
+                        <div class="filter-input-wrap" style="flex:1;min-width:180px;">
+                            <i class="bi bi-search filter-icon"></i>
+                            <input type="text" name="s_key" class="form-control filter-input" placeholder="Cari nama alat atau dokter..." value="<?php echo htmlspecialchars($s_key); ?>">
+                        </div>
+                        <input type="date" name="tgl_mulai" class="form-control" style="width:160px;" value="<?php echo htmlspecialchars($tgl_mulai); ?>">
+                        <input type="date" name="tgl_akhir" class="form-control" style="width:160px;" value="<?php echo htmlspecialchars($tgl_akhir); ?>">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-funnel me-1"></i> Filter
+                        </button>
+                        <?php if ($s_key || $tgl_mulai || $tgl_akhir) { ?>
+                            <a href="history.php" class="btn btn-secondary">Reset</a>
+                        <?php } ?>
                     </div>
                 </form>
             </div>
 
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body p-0">
+            <!-- Table -->
+            <div class="form-section-card" style="max-width:100%;">
+                <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
@@ -71,7 +80,7 @@ include '../tampilan/header.php';
                                 <th>Tgl Pinjam</th>
                                 <th>Tgl Kembali</th>
                                 <th>Status</th>
-                                <th class="text-center">Aksi</th>
+                                <th class="text-center pe-3">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -94,23 +103,27 @@ include '../tampilan/header.php';
                             $q = mysqli_query($koneksi, $sql);
 
                             if (mysqli_num_rows($q) == 0) {
-                                echo '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>Belum ada riwayat peminjaman saat ini.</td></tr>';
+                                echo '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-2 d-block mb-2"></i>Belum ada riwayat peminjaman saat ini.</td></tr>';
                             } else {
                                 while($h = mysqli_fetch_array($q)) {
-                                    $badge = ($h['status_peminjaman'] == 'Dipinjam') ? 'bg-warning text-dark' : 'bg-success';
+                                    $badge = ($h['status_peminjaman'] == 'Dipinjam') ? 'badge-status-warning' : 'badge-status-success';
                             ?>
                             <tr>
                                 <td class="ps-3"><strong><?php echo $h['nama_alat']; ?></strong></td>
                                 <td><?php echo $h['nama_lengkap']; ?></td>
-                                <td><small><?php echo date('d/m/Y H:i', strtotime($h['tgl_pinjam'])); ?></small></td>
-                                <td><small><?php echo ($h['tgl_kembali']) ? date('d/m/Y H:i', strtotime($h['tgl_kembali'])) : '-'; ?></small></td>
+                                <td><small class="text-muted"><?php echo date('d/m/Y H:i', strtotime($h['tgl_pinjam'])); ?></small></td>
+                                <td><small class="text-muted"><?php echo ($h['tgl_kembali']) ? date('d/m/Y H:i', strtotime($h['tgl_kembali'])) : '-'; ?></small></td>
                                 <td><span class="badge <?php echo $badge; ?>"><?php echo $h['status_peminjaman']; ?></span></td>
-                                <td class="text-center">
+                                <td class="text-center pe-3">
                                     <?php if($h['status_peminjaman'] == 'Dipinjam') { ?>
                                         <a href="history.php?kembali=<?php echo $h['id_history']; ?>&alat=<?php echo $h['id_alat']; ?>" 
-                                           class="btn btn-sm btn-outline-primary" 
-                                           onclick="return confirm('Apakah alat ini sudah dikembalikan?')">Kembalikan</a>
-                                    <?php } else { echo '<i class="bi bi-check-circle-fill text-success"></i>'; } ?>
+                                           class="btn btn-sm btn-primary px-3"
+                                           onclick="return confirm('Apakah alat ini sudah dikembalikan?')">
+                                            <i class="bi bi-box-arrow-in-left me-1"></i>Kembalikan
+                                        </a>
+                                    <?php } else { ?>
+                                        <span class="text-success"><i class="bi bi-check-circle-fill"></i></span>
+                                    <?php } ?>
                                 </td>
                             </tr>
                             <?php } } ?>
@@ -119,11 +132,12 @@ include '../tampilan/header.php';
                 </div>
             </div>
 
+            <!-- Pagination -->
             <?php if ($total_pages > 1) { ?>
-            <nav aria-label="Page navigation">
+            <nav aria-label="Page navigation" class="mt-3">
                 <ul class="pagination justify-content-end">
                     <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?page=<?php echo $page - 1; ?><?php echo $url_query; ?>">Sebelumnya</a>
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?><?php echo $url_query; ?>"><i class="bi bi-chevron-left"></i></a>
                     </li>
                     <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
                         <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
@@ -131,7 +145,7 @@ include '../tampilan/header.php';
                         </li>
                     <?php } ?>
                     <li class="page-item <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?page=<?php echo $page + 1; ?><?php echo $url_query; ?>">Selanjutnya</a>
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?><?php echo $url_query; ?>"><i class="bi bi-chevron-right"></i></a>
                     </li>
                 </ul>
             </nav>

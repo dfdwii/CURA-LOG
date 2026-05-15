@@ -7,21 +7,16 @@ if (isset($_POST['daftar'])) {
     $pass_raw = input($_POST['password']);
     $pass_conf = input($_POST['konfirmasi_password']);
     $role = 'dokter';
-
-
     if ($pass_raw !== $pass_conf) {
         $error = "Pendaftaran gagal! Password dan Konfirmasi Password tidak cocok.";
     } else {
-
         $pass = md5($pass_raw);
         $cek = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
-        
         if (mysqli_num_rows($cek) > 0) {
             $error = "Username sudah terdaftar, silakan gunakan NIP/ID yang lain!";
         } else {
             $sql = "INSERT INTO users (username, password, nama_lengkap, role) 
                     VALUES ('$user', '$pass', '$nama', '$role')";
-            
             if (mysqli_query($koneksi, $sql)) {
                 echo "<script>alert('Registrasi berhasil! Silakan login.'); window.location='login.php';</script>";
             } else {
@@ -30,6 +25,7 @@ if (isset($_POST['daftar'])) {
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +39,6 @@ if (isset($_POST['daftar'])) {
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/style.css">
 </head>
 <body>
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-5 card-regis">
@@ -52,9 +47,7 @@ if (isset($_POST['daftar'])) {
                     <h3 class="text-center fw-bold text-primary">Daftar Akun Dokter</h3>
                     <p class="text-center text-muted">Silakan lengkapi data untuk membuat akun baru.</p>
                     <hr>
-
                     <?php if(isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
-
                     <form method="POST">
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
@@ -64,7 +57,14 @@ if (isset($_POST['daftar'])) {
                             <label class="form-label">Username (NIP/ID)</label>
                             <input type="text" name="username" class="form-control" placeholder="Contoh: 200106" required>
                         </div>
-                        
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select name="role" class="form-control" required>
+                                <option value="">Pilih Role</option>
+                                <option value="dokter">Dokter</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
                             <div class="input-group">
@@ -74,7 +74,6 @@ if (isset($_POST['daftar'])) {
                                 </button>
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label">Konfirmasi Password</label>
                             <div class="input-group">
@@ -84,12 +83,10 @@ if (isset($_POST['daftar'])) {
                                 </button>
                             </div>
                         </div>
-
                         <div class="mt-4">
                             <button type="submit" name="daftar" class="btn btn-primary w-100">Daftar Sekarang</button>
                         </div>
                     </form>
-                    
                     <div class="text-center mt-3">
                         <p class="small">Sudah punya akun? <a href="login.php">Login di sini</a></p>
                     </div>
@@ -98,10 +95,8 @@ if (isset($_POST['daftar'])) {
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
     document.getElementById('toggleRegPassword').addEventListener('click', function () {
         const input = document.getElementById('regPassword');
         const icon = document.getElementById('iconRegPass');
@@ -110,7 +105,6 @@ if (isset($_POST['daftar'])) {
         icon.classList.toggle('bi-eye');
         icon.classList.toggle('bi-eye-slash');
     });
-
 
     document.getElementById('toggleRegConfirm').addEventListener('click', function () {
         const input = document.getElementById('regConfirmPassword');

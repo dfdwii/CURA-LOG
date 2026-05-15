@@ -78,28 +78,21 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const htmlElement = document.documentElement;
-    const currentTheme = localStorage.getItem('theme');
-    
-    if (currentTheme === 'dark') {
-        htmlElement.setAttribute('data-bs-theme', 'dark');
-        if (darkModeToggle) {
-            darkModeToggle.checked = true;
-        }
-    }
+    var toggle = document.getElementById('darkModeToggle');
+    if (!toggle) return;
 
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                htmlElement.setAttribute('data-bs-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                htmlElement.setAttribute('data-bs-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    }
+    var isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    toggle.checked = isDark;
+
+    toggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.documentElement.setAttribute('data-bs-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-bs-theme', 'light');
+            localStorage.removeItem('theme');
+        }
+    });
 });
 </script>
 

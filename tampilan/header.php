@@ -6,6 +6,8 @@
     <title>CURA-LOG - Sistem Inventaris Medis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>css/style.css">
+    <script>(function(){var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.setAttribute('data-bs-theme','dark');}})();</script>
     <style>
         body, html { overflow-x: hidden; }
 
@@ -22,4 +24,4 @@
         .table-responsive { border: none; }
     </style>
 </head>
-<body class="bg-body">
+<body>

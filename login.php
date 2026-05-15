@@ -5,13 +5,10 @@ if (isset($_SESSION['username'])) {
     header("Location: index.php");
     exit;
 }
-
 if (isset($_POST['login'])) {
     $user = input($_POST['username']);
     $pass = md5(input($_POST['password']));
-
     $cek = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user' AND password='$pass'");
-    
     if (mysqli_num_rows($cek) > 0) {
         $data = mysqli_fetch_array($cek);
         $_SESSION['user_id'] = $data['id'];
@@ -47,9 +44,7 @@ if (isset($_POST['login'])) {
                     <h3 class="text-center fw-bold text-primary">Login CURA-LOG</h3>
                     <p class="text-center text-muted">Silakan masuk ke akun Anda</p>
                     <hr>
-                    
                     <?php if(isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
-                    
                     <form method="POST">
                         <div class="mb-3">
                             <label class="form-label">Username</label>
@@ -68,7 +63,6 @@ if (isset($_POST['login'])) {
                             <button type="submit" name="login" class="btn btn-primary w-100">Masuk</button>
                         </div>
                     </form>
-
                     <div class="text-center mt-3">
                         <p class="small">Belum punya akun? <a href="registrasi.php">Daftar Dokter</a></p>
                     </div>
@@ -77,10 +71,8 @@ if (isset($_POST['login'])) {
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
     const togglePassword = document.getElementById('togglePassword');
     const inputPassword = document.getElementById('inputPassword');
     const iconPassword = document.getElementById('iconPassword');
