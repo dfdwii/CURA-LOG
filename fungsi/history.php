@@ -43,14 +43,13 @@ include '../tampilan/header.php';
 
         <div class="main-content px-4 pt-0">
 
-            <!-- Page Header -->
+
             <div class="sticky-top pt-4 pb-3 mb-3" style="z-index:10;">
                 <div class="mb-3">
                     <h2 class="m-0"><?php echo ($role == 'dokter') ? 'Histori Peminjaman' : 'Laporan Peminjaman'; ?></h2>
                     <p class="text-muted m-0 mt-1" style="font-size:13.5px;">Riwayat seluruh transaksi peminjaman alat medis</p>
                 </div>
 
-                <!-- Filter bar -->
                 <form method="GET" class="filter-bar">
                     <div class="filter-bar-inner flex-wrap gap-2">
                         <div class="filter-input-wrap" style="flex:1;min-width:180px;">
@@ -69,7 +68,6 @@ include '../tampilan/header.php';
                 </form>
             </div>
 
-            <!-- Table -->
             <div class="form-section-card" style="max-width:100%;">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
@@ -132,7 +130,6 @@ include '../tampilan/header.php';
                 </div>
             </div>
 
-            <!-- Pagination -->
             <?php if ($total_pages > 1) { ?>
             <nav aria-label="Page navigation" class="mt-3">
                 <ul class="pagination justify-content-end">
