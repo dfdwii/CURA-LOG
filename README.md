@@ -47,7 +47,7 @@ Aplikasi ini menggunakan sistem *Role-Based Access Control* (RBAC) dengan 3 jeni
      $user = "root";
      $pass = "";
      $db   = "inventaris";
-     $base_url = "http://localhost/CURALOG/"; // Sesuaikan dengan nama folder kamu
+     $base_url = "http://localhost/CURALOG/";
      ```
 5. **Jalankan Aplikasi:** Buka browser dan akses `http://localhost/CURALOG/`.
 
