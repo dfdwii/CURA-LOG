@@ -25,7 +25,7 @@ while ($row = mysqli_fetch_assoc($q_status)) {
     $label_status[] = $row['status'];
     $data_status[] = $row['jumlah'];
     if ($row['status'] == 'Tersedia') $warna_status[] = '#198754'; 
-    else if ($row['status'] == 'Dipinjam') $warna_status[] = '#ffc107'; 
+    else if ($row['status'] == 'Dipinjam') $warna_status[] = '#eb0000'; 
     else if ($row['status'] == 'Rusak') $warna_status[] = '#dc3545'; 
     else if ($row['status'] == 'Perlu Kalibrasi') $warna_status[] = '#0dcaf0'; 
     else $warna_status[] = '#6c757d'; 
